@@ -10,7 +10,6 @@ import (
 	"gorm.io/driver/postgres"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
-	"gorm.io/gorm/logger"
 )
 
 type Dbinstance struct {
@@ -53,10 +52,18 @@ func ConnectDb() {
 		log.Fatal("This is the error:", err)
 	}
 
-	db.Logger = logger.Default.LogMode(logger.Info)
+	// db.Logger = logger.Default.LogMode(logger.Info)
 
 	db.AutoMigrate(
 		models.Product{},
+		models.Category{},
+		models.Tag{},
+		models.Inventory{},
+		models.Address{},
+		models.Cart{},
+		models.Order{},
+		models.Payment{},
+		models.User{},
 	)
 
 	DB = Dbinstance{

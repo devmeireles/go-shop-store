@@ -9,10 +9,18 @@ require (
 	gorm.io/gorm v1.24.3
 )
 
-require github.com/davecgh/go-spew v1.1.1 // indirect
+require (
+	github.com/davecgh/go-spew v1.1.1 // indirect
+	github.com/go-playground/locales v0.14.1 // indirect
+	github.com/go-playground/universal-translator v0.18.1 // indirect
+	github.com/go-playground/validator/v10 v10.11.2 // indirect
+	github.com/leodido/go-urn v1.2.1 // indirect
+	github.com/pkg/errors v0.9.1 // indirect
+)
 
 require (
 	github.com/andybalholm/brotli v1.0.4 // indirect
+	github.com/bgadrian/fastfaker v2.1.0+incompatible
 	github.com/gofiber/fiber/v2 v2.41.0
 	github.com/jackc/pgpassfile v1.0.0 // indirect
 	github.com/jackc/pgservicefile v0.0.0-20221227161230-091c0ba34f0a // indirect
@@ -29,7 +37,7 @@ require (
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasthttp v1.43.0 // indirect
 	github.com/valyala/tcplisten v1.0.0 // indirect
-	golang.org/x/crypto v0.4.0 // indirect
-	golang.org/x/sys v0.3.0 // indirect
-	golang.org/x/text v0.5.0 // indirect
+	golang.org/x/crypto v0.5.0 // indirect
+	golang.org/x/sys v0.4.0 // indirect
+	golang.org/x/text v0.6.0 // indirect
 )

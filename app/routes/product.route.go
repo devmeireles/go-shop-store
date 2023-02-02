@@ -8,5 +8,7 @@ import (
 func ProductRoutes(app *fiber.App) {
 	product := app.Group("/product")
 	product.Get("/", controllers.ListProducts)
+	product.Get("/:id", controllers.GetProduct)
+	product.Post("/", controllers.CreateProduct)
 
 }
