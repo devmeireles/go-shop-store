@@ -13,6 +13,7 @@ import (
 	"github.com/devmeireles/go-shop-store/app/utils"
 	"github.com/gofiber/fiber/v2"
 	"github.com/steinfletcher/apitest"
+	jsonpath "github.com/steinfletcher/apitest-jsonpath"
 )
 
 func setupTestRoutes() *fiber.App {
@@ -32,6 +33,9 @@ func TestListProducts(t *testing.T) {
 			Handler(handler).
 			Get("/product").
 			Expect(t).
+			Assert(jsonpath.Present("data")).
+			Assert(jsonpath.NotPresent("message")).
+			Assert(jsonpath.Equal("success", true)).
 			Status(http.StatusOK).
 			End()
 	})
@@ -51,6 +55,9 @@ func TestListProducts(t *testing.T) {
 			Post("/product").
 			JSON(productSave).
 			Expect(t).
+			Assert(jsonpath.Present("data")).
+			Assert(jsonpath.NotPresent("message")).
+			Assert(jsonpath.Equal("success", true)).
 			Status(http.StatusCreated).
 			End()
 	})
@@ -60,6 +67,9 @@ func TestListProducts(t *testing.T) {
 			Handler(handler).
 			Post("/product").
 			Expect(t).
+			Assert(jsonpath.Present("message")).
+			Assert(jsonpath.NotPresent("data")).
+			Assert(jsonpath.Equal("success", false)).
 			Status(http.StatusBadRequest).
 			End()
 	})
@@ -69,6 +79,9 @@ func TestListProducts(t *testing.T) {
 			Handler(handler).
 			Get("/product/1").
 			Expect(t).
+			Assert(jsonpath.Present("data")).
+			Assert(jsonpath.NotPresent("message")).
+			Assert(jsonpath.Equal("success", true)).
 			Status(http.StatusOK).
 			End()
 	})
@@ -78,6 +91,9 @@ func TestListProducts(t *testing.T) {
 			Handler(handler).
 			Get("/product/999999").
 			Expect(t).
+			Assert(jsonpath.Present("message")).
+			Assert(jsonpath.NotPresent("data")).
+			Assert(jsonpath.Equal("success", false)).
 			Status(http.StatusNotFound).
 			End()
 	})
@@ -87,7 +103,48 @@ func TestListProducts(t *testing.T) {
 			Handler(handler).
 			Get("/product/abc").
 			Expect(t).
+			Assert(jsonpath.Present("message")).
+			Assert(jsonpath.NotPresent("data")).
+			Assert(jsonpath.Equal("success", false)).
 			Status(http.StatusBadRequest).
+			End()
+	})
+
+	t.Run("Update a product", func(t *testing.T) {
+		var product = models.Product{
+			Price: faker.Global.Price(3, 25),
+		}
+
+		productUpdate, _ := json.Marshal(product)
+
+		apitest.New().
+			Handler(handler).
+			Put("/product/1").
+			JSON(productUpdate).
+			Expect(t).
+			Assert(jsonpath.NotPresent("data")).
+			Assert(jsonpath.NotPresent("message")).
+			Assert(jsonpath.Equal("success", true)).
+			Status(http.StatusOK).
+			End()
+	})
+
+	t.Run("Shouldn't update a product due an unexistent item", func(t *testing.T) {
+		var product = models.Product{
+			Price: faker.Global.Price(3, 25),
+		}
+
+		productUpdate, _ := json.Marshal(product)
+
+		apitest.New().
+			Handler(handler).
+			Put("/product/999991").
+			JSON(productUpdate).
+			Expect(t).
+			Assert(jsonpath.Present("message")).
+			Assert(jsonpath.NotPresent("data")).
+			Assert(jsonpath.Equal("success", false)).
+			Status(http.StatusNotFound).
 			End()
 	})
 }

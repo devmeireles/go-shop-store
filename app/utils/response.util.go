@@ -6,10 +6,24 @@ type ResponseMsg struct {
 	Data    interface{} `json:"data,omitempty"`
 }
 
+type ResponseErrorValidation struct {
+	Success bool             `json:"success"`
+	Message []*ErrorResponse `json:"message,omitempty"`
+}
+
 func ResError(err error) ResponseMsg {
 	res := ResponseMsg{
 		Success: false,
 		Message: err.Error(),
+	}
+
+	return res
+}
+
+func ResErrorValidation(err []*ErrorResponse) ResponseErrorValidation {
+	res := ResponseErrorValidation{
+		Success: false,
+		Message: err,
 	}
 
 	return res

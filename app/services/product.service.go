@@ -40,3 +40,13 @@ func GetProductByID(id int) (*models.Product, error) {
 
 	return &product, nil
 }
+
+func UpdateProduct(product models.Product, id int) error {
+	if err := database.DB.Db.Model(&models.Product{}).
+		Where("id = ?", id).
+		Updates(&product).Error; err != nil {
+		return err
+	}
+
+	return nil
+}

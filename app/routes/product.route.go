@@ -10,5 +10,5 @@ func ProductRoutes(app *fiber.App) {
 	product.Get("/", controllers.ListProducts)
 	product.Get("/:id", controllers.GetProduct)
 	product.Post("/", controllers.CreateProduct)
-
+	product.Put("/:id", controllers.UpdateProduct)
 }

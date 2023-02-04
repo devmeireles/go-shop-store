@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"encoding/json"
 	"errors"
 	"strconv"
 
@@ -18,7 +19,8 @@ func CreateProduct(c *fiber.Ctx) error {
 
 	errors := utils.ValidateStruct(*data)
 	if errors != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(errors)
+		res := utils.ResErrorValidation(errors)
+		return c.Status(fiber.StatusBadRequest).JSON(res)
 	}
 
 	product, err := services.SaveProduct(data)
@@ -65,5 +67,35 @@ func GetProduct(c *fiber.Ctx) error {
 	}
 
 	res := utils.ResSuccess(product)
+	return c.Status(fiber.StatusOK).JSON(res)
+}
+
+func UpdateProduct(c *fiber.Ctx) error {
+	id, err := strconv.Atoi(c.Params("id"))
+	payload := new(models.Product)
+	c.BodyParser(payload)
+
+	if err != nil {
+		res := utils.ResError(err)
+		return c.Status(fiber.ErrBadRequest.Code).JSON(res)
+	}
+
+	_, err = services.GetProductByID(id)
+	if err != nil {
+		res := utils.ResError(err)
+		return c.Status(fiber.StatusNotFound).JSON(res)
+	}
+
+	payloadFmt, err := json.Marshal(payload)
+	product := models.Product{}
+	err = json.Unmarshal(payloadFmt, &product)
+
+	err = services.UpdateProduct(product, id)
+	if err != nil {
+		res := utils.ResError(err)
+		return c.Status(fiber.StatusInternalServerError).JSON(res)
+	}
+
+	res := utils.ResSuccess(nil)
 	return c.Status(fiber.StatusOK).JSON(res)
 }
