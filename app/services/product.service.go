@@ -50,3 +50,11 @@ func UpdateProduct(product models.Product, id int) error {
 
 	return nil
 }
+
+func DeleteProduct(product *models.Product, id int) error {
+	if err := database.DB.Db.Delete(product, id).Error; err != nil {
+		return err
+	}
+
+	return nil
+}

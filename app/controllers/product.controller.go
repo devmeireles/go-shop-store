@@ -99,3 +99,33 @@ func UpdateProduct(c *fiber.Ctx) error {
 	res := utils.ResSuccess(nil)
 	return c.Status(fiber.StatusOK).JSON(res)
 }
+
+func DeleteProduct(c *fiber.Ctx) error {
+	id, err := strconv.Atoi(c.Params("id"))
+
+	if err != nil {
+		res := utils.ResError(err)
+		return c.Status(fiber.ErrBadRequest.Code).JSON(res)
+	}
+
+	product, err := services.GetProductByID(id)
+
+	if err != nil {
+		res := utils.ResError(err)
+
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return c.Status(fiber.StatusNotFound).JSON(res)
+		}
+
+		return c.Status(fiber.StatusInternalServerError).JSON(res)
+	}
+
+	err = services.DeleteProduct(product, id)
+	if err != nil {
+		res := utils.ResError(err)
+		return c.Status(fiber.StatusInternalServerError).JSON(res)
+	}
+
+	res := utils.ResSuccess(nil)
+	return c.Status(fiber.StatusOK).JSON(res)
+}

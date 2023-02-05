@@ -17,6 +17,7 @@ import (
 )
 
 func setupTestRoutes() *fiber.App {
+	// os.Remove("../../db_test.db")
 	os.Setenv("ENVIRONMENT", "test")
 	config.ConnectDb()
 	app := fiber.New()
@@ -28,12 +29,12 @@ func setupTestRoutes() *fiber.App {
 func TestListProducts(t *testing.T) {
 	handler := utils.FiberToHandlerFunc(setupTestRoutes())
 
-	t.Run("Get all products", func(t *testing.T) {
+	t.Run("Should return an empty list of products because there's no data", func(t *testing.T) {
 		apitest.New().
 			Handler(handler).
 			Get("/product").
 			Expect(t).
-			Assert(jsonpath.Present("data")).
+			Assert(jsonpath.Len("data", 0)).
 			Assert(jsonpath.NotPresent("message")).
 			Assert(jsonpath.Equal("success", true)).
 			Status(http.StatusOK).
@@ -59,6 +60,18 @@ func TestListProducts(t *testing.T) {
 			Assert(jsonpath.NotPresent("message")).
 			Assert(jsonpath.Equal("success", true)).
 			Status(http.StatusCreated).
+			End()
+	})
+
+	t.Run("Get all products", func(t *testing.T) {
+		apitest.New().
+			Handler(handler).
+			Get("/product").
+			Expect(t).
+			Assert(jsonpath.Present("data")).
+			Assert(jsonpath.NotPresent("message")).
+			Assert(jsonpath.Equal("success", true)).
+			Status(http.StatusOK).
 			End()
 	})
 
@@ -146,5 +159,33 @@ func TestListProducts(t *testing.T) {
 			Assert(jsonpath.Equal("success", false)).
 			Status(http.StatusNotFound).
 			End()
+	})
+
+	t.Run("Delete a product", func(t *testing.T) {
+		apitest.New().
+			Handler(handler).
+			Delete("/product/1").
+			Expect(t).
+			Assert(jsonpath.NotPresent("data")).
+			Assert(jsonpath.NotPresent("message")).
+			Assert(jsonpath.Equal("success", true)).
+			Status(http.StatusOK).
+			End()
+	})
+
+	t.Run("Shouldn't delete a product due an unexistent item", func(t *testing.T) {
+		apitest.New().
+			Handler(handler).
+			Delete("/product/999991").
+			Expect(t).
+			Assert(jsonpath.Present("message")).
+			Assert(jsonpath.NotPresent("data")).
+			Assert(jsonpath.Equal("success", false)).
+			Status(http.StatusNotFound).
+			End()
+	})
+
+	t.Cleanup(func() {
+		os.Remove("../../db_test.db")
 	})
 }
