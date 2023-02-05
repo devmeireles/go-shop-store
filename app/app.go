@@ -14,5 +14,6 @@ func setupRoutes() {
 	app := fiber.New()
 	routes.ProductRoutes(app)
 	routes.CategoryRoutes(app)
+	routes.TagRoutes(app)
 	app.Listen(":3000")
 }
