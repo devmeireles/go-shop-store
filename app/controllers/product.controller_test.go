@@ -16,7 +16,7 @@ import (
 	jsonpath "github.com/steinfletcher/apitest-jsonpath"
 )
 
-func setupTestRoutes() *fiber.App {
+func setupProductTestRoutes() *fiber.App {
 	// os.Remove("../../db_test.db")
 	os.Setenv("ENVIRONMENT", "test")
 	config.ConnectDb()
@@ -26,8 +26,8 @@ func setupTestRoutes() *fiber.App {
 	return app
 }
 
-func TestListProducts(t *testing.T) {
-	handler := utils.FiberToHandlerFunc(setupTestRoutes())
+func TestCategories(t *testing.T) {
+	handler := utils.FiberToHandlerFunc(setupProductTestRoutes())
 
 	t.Run("Should return an empty list of products because there's no data", func(t *testing.T) {
 		apitest.New().
